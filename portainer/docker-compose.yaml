@@ -1,0 +1,31 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+     # - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/daniel/docker/portainer/data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer-http.entrypoints=http"
+      - "traefik.http.routers.portainer-http.rule=Host(`portainer.techcats.org`)"
+      - "traefik.http.middlewares.portainer-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.portainer-http.middlewares=portainer-https-redirect"
+      - "traefik.http.routers.portainer-https.entrypoints=https"
+      - "traefik.http.routers.portainer-https.rule=Host(`portainer.techcats.org`)"
+      - "traefik.http.routers.portainer-https.tls=true"
+      - "traefik.http.routers.portainer-https.tls.certresolver=cloudflare"
+      - "traefik.http.routers.portainer-https.tls.domains[0].main=techcats.org"
+      - "traefik.http.routers.portainer-https.tls.domains[0].sans=*.techcats.org"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

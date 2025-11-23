@@ -1,0 +1,23 @@
+# ================================
+# Environment files (visible)
+# ================================
+arr-stack/.env
+code-server/.env
+grafana-monitoring/.env
+homarr/.env
+minio/.env
+pihole/.env
+traefik/.env
+wireguard/.env
+
+# ================================
+# Cloudflare secret (visible)
+# ================================
+traefik/cf-token
+
+# ================================
+# Misc system files
+# ================================
+.DS_Store
+
+arr-stack

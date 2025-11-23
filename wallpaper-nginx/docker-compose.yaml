@@ -1,0 +1,27 @@
+services:
+  nginx-wallpapers:
+    image: nginx:latest
+    container_name: nginx-wallpapers
+    restart: unless-stopped
+    volumes:
+      - /home/daniel/docker/wallpaperNginx:/usr/share/nginx/html
+      - /home/daniel/docker/wallpaperNginx/nginx.conf:/etc/nginx/nginx.conf
+      - /home/daniel/docker/wallpaperNginx/logs:/var/log/nginx
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wallpapers.entrypoints=http"
+      - "traefik.http.routers.wallpapers.rule=Host(`wallpapers.techcats.org`)"
+      - "traefik.http.middlewares.wallpapers-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.wallpapers.middlewares=wallpapers-https-redirect"
+      - "traefik.http.routers.wallpapers-secure.entrypoints=https"
+      - "traefik.http.routers.wallpapers-secure.rule=Host(`wallpapers.techcats.org`)"
+      - "traefik.http.routers.wallpapers-secure.tls=true"
+      - "traefik.http.routers.wallpapers-secure.service=wallpapers"
+      - "traefik.http.services.wallpapers.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
